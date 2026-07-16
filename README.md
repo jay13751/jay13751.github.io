@@ -2,7 +2,7 @@
 
 3D environment art, AI-assisted production, and content automation portfolio.
 
-**Live site:** https://jay13751.github.io/jay.github.io/
+**Live site:** https://jay13751.github.io/
 
 ## Development
 
