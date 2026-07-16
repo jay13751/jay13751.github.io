@@ -1,0 +1,52 @@
+---
+import { getCollection } from "astro:content"
+import BaseLayout from "../../layouts/BaseLayout.astro"
+import { isPublicEntry } from "../../lib/content"
+
+const entries = (await getCollection("projects"))
+  .filter(isPublicEntry)
+  .sort((left, right) => right.data.year - left.data.year || left.data.title.localeCompare(right.data.title, "ko"))
+---
+
+<BaseLayout title="Portfolio" description="3D 환경 연출과 AI 제작 워크플로를 연결한 프로젝트를 소개합니다.">
+  <div class="page">
+    <section class="hero-shell page-hero">
+      <span class="eyebrow">Portfolio</span>
+      <h1 class="page-title">장면 제작과 워크플로 설계를 연결한 프로젝트</h1>
+      <p class="page-copy">
+        환경 연출, AI 보조 제작, 자동화를 하나의 흐름으로 연결한 공개 작업을 모아 보여줍니다.
+      </p>
+    </section>
+
+    <section class="section-block">
+      <div class="list-shell">
+        <div class="meta-row">
+          <span class="count-chip">{entries.length} public projects</span>
+          <span>공개된 프로젝트를 연도순으로 보여줍니다.</span>
+        </div>
+
+        {
+          entries.length > 0 ? (
+            <div class="list-stack">
+              {entries.map((entry) => (
+                <article class="list-item">
+                  <div class="meta-row">
+                    <span class="pill">{entry.data.category}</span>
+                    <span>{entry.data.year}</span>
+                    {entry.data.featured ? <span>featured</span> : null}
+                  </div>
+                  <h2 class="list-title">{entry.data.title}</h2>
+                  <p class="card-copy">{entry.data.summary}</p>
+                </article>
+              ))}
+            </div>
+          ) : (
+            <div class="empty-state">
+              아직 공개된 프로젝트가 없습니다. 첫 번째 케이스 스터디를 준비하고 있습니다.
+            </div>
+          )
+        }
+      </div>
+    </section>
+  </div>
+</BaseLayout>

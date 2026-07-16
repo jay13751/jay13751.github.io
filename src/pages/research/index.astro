@@ -1,0 +1,54 @@
+---
+import { getCollection } from "astro:content"
+import BaseLayout from "../../layouts/BaseLayout.astro"
+import { formatKoreanDate, isPublicEntry } from "../../lib/content"
+
+const entries = (await getCollection("research"))
+  .filter(isPublicEntry)
+  .sort((left, right) => right.data.date.getTime() - left.data.date.getTime())
+---
+
+<BaseLayout title="Research" description="3D 환경 연출, AI 보조 제작, 워크플로 자동화에 관한 공개 연구 기록입니다.">
+  <div class="page">
+    <section class="hero-shell page-hero">
+      <span class="eyebrow">Research</span>
+      <h1 class="page-title">실험과 근거를 정리하는 연구 기록</h1>
+      <p class="page-copy">
+        3D 환경 연출, AI 보조 제작, 워크플로 자동화를 실험하고 비교한 과정을 정리합니다.
+      </p>
+    </section>
+
+    <section class="section-block">
+      <div class="list-shell">
+        <div class="meta-row">
+          <span class="count-chip">{entries.length} public notes</span>
+          <span>공개된 기록을 최신순으로 보여줍니다.</span>
+        </div>
+
+        {
+          entries.length > 0 ? (
+            <div class="list-stack">
+              {entries.map((entry) => (
+                <article class="list-item">
+                  <div class="meta-row">
+                    <span class="pill">Research</span>
+                    <span>{formatKoreanDate(entry.data.date)}</span>
+                    <span>{entry.data.confidence}</span>
+                  </div>
+                  <h2 class="list-title">{entry.data.title}</h2>
+                  <p class="card-copy">
+                    도구 {entry.data.tools.length}개, 소스 {entry.data.sources.length}개가 등록되어 있습니다.
+                  </p>
+                </article>
+              ))}
+            </div>
+          ) : (
+            <div class="empty-state">
+              아직 공개된 리서치 노트가 없습니다. 첫 번째 실험 기록을 준비하고 있습니다.
+            </div>
+          )
+        }
+      </div>
+    </section>
+  </div>
+</BaseLayout>

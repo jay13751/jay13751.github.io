@@ -1,0 +1,54 @@
+---
+import { getCollection } from "astro:content"
+import BaseLayout from "../../layouts/BaseLayout.astro"
+import { formatKoreanDate, isPublicEntry } from "../../lib/content"
+
+const entries = (await getCollection("blog"))
+  .filter(isPublicEntry)
+  .sort((left, right) => right.data.date.getTime() - left.data.date.getTime())
+---
+
+<BaseLayout title="Blog" description="장면 제작과 워크플로 실험에 관한 작업 로그와 회고를 기록합니다.">
+  <div class="page">
+    <section class="hero-shell page-hero">
+      <span class="eyebrow">Blog</span>
+      <h1 class="page-title">시간순 작업 로그와 회고를 위한 블로그</h1>
+      <p class="page-copy">
+        진행 중인 작업에서 발견한 문제, 선택 과정, 다음 실험을 위한 생각을 시간순으로 기록합니다.
+      </p>
+    </section>
+
+    <section class="section-block">
+      <div class="list-shell">
+        <div class="meta-row">
+          <span class="count-chip">{entries.length} public posts</span>
+          <span>공개된 작업 로그를 최신순으로 보여줍니다.</span>
+        </div>
+
+        {
+          entries.length > 0 ? (
+            <div class="list-stack">
+              {entries.map((entry) => (
+                <article class="list-item">
+                  <div class="meta-row">
+                    <span class="pill">Blog</span>
+                    <span>{formatKoreanDate(entry.data.date)}</span>
+                    <span>{entry.data.tags.length} tags</span>
+                  </div>
+                  <h2 class="list-title">{entry.data.title}</h2>
+                  <p class="card-copy">
+                    {entry.data.description ?? "설명은 아직 작성되지 않았지만 공개 가능한 상태의 글입니다."}
+                  </p>
+                </article>
+              ))}
+            </div>
+          ) : (
+            <div class="empty-state">
+              아직 공개된 블로그 글이 없습니다. 첫 번째 작업 로그를 준비하고 있습니다.
+            </div>
+          )
+        }
+      </div>
+    </section>
+  </div>
+</BaseLayout>

@@ -1,0 +1,338 @@
+---
+import { getCollection } from "astro:content"
+import BaseLayout from "../layouts/BaseLayout.astro"
+import { formatKoreanDate, isPublicEntry } from "../lib/content"
+import { withBase } from "../lib/site"
+
+const [blogEntries, researchEntries, wikiEntries, projectEntries] = await Promise.all([
+  getCollection("blog"),
+  getCollection("research"),
+  getCollection("wiki"),
+  getCollection("projects"),
+])
+
+const publicBlog = blogEntries.filter(isPublicEntry).sort((left, right) => right.data.date.getTime() - left.data.date.getTime())
+const publicResearch = researchEntries
+  .filter(isPublicEntry)
+  .sort((left, right) => right.data.date.getTime() - left.data.date.getTime())
+const publicWiki = wikiEntries
+  .filter(isPublicEntry)
+  .sort((left, right) => right.data.lastUpdated.getTime() - left.data.lastUpdated.getTime())
+const publicProjects = projectEntries
+  .filter(isPublicEntry)
+  .sort((left, right) => right.data.year - left.data.year)
+
+const metrics = [
+  { label: "Projects", value: publicProjects.length },
+  { label: "Research", value: publicResearch.length },
+  { label: "Wiki", value: publicWiki.length },
+  { label: "Blog", value: publicBlog.length },
+] as const
+
+const featuredWork = [
+  {
+    index: "01",
+    category: "Virtual Production",
+    title: "장면 구조와 카메라 무드를 한 화면에서 정리하는 제작 축",
+    summary: "프리비즈, 환경 연출, 라이팅 검토를 연결해 장면의 리듬과 밀도를 빠르게 맞춥니다.",
+    tools: ["Unreal Engine", "Blender", "Sequencer"],
+    href: withBase("/portfolio/"),
+  },
+  {
+    index: "02",
+    category: "AI Background Pipeline",
+    title: "룩 탐색과 배경 후보 제작을 가속하는 보조 루프",
+    summary: "ComfyUI 기반 변형 제작과 비교 기준 정리를 묶어 반복 탐색의 속도를 높입니다.",
+    tools: ["ComfyUI", "ControlNet", "Review Notes"],
+    href: withBase("/research/"),
+  },
+  {
+    index: "03",
+    category: "Environment Art R&D",
+    title: "환경 아트 실험을 기록 가능한 연구 패턴으로 전환",
+    summary: "라이팅, 레벨 무드, 화면 깊이 테스트를 축적해 다음 장면 설계에 다시 사용합니다.",
+    tools: ["Lighting", "Lookdev", "Scene Studies"],
+    href: withBase("/portfolio/"),
+  },
+  {
+    index: "04",
+    category: "Automation Wiki",
+    title: "반복 제작 절차를 위키와 체크리스트로 재사용",
+    summary: "정리 규칙, 템플릿, 공개 노트를 연결해 작업 전환 비용을 줄이는 운영 축입니다.",
+    tools: ["Templates", "Publishing", "Archive Rules"],
+    href: withBase("/wiki/"),
+  },
+] as const
+
+const methodSteps = [
+  {
+    index: "01",
+    title: "Research",
+    meta: "brief / references / frame",
+    copy: "문제 정의와 화면 방향을 먼저 고정해 탐색의 기준점을 만듭니다.",
+  },
+  {
+    index: "02",
+    title: "3D Scene",
+    meta: "layout / camera / massing",
+    copy: "공간 구조와 카메라 흐름을 빠르게 세워 장면의 골격을 결정합니다.",
+  },
+  {
+    index: "03",
+    title: "AI Assist",
+    meta: "variants / texture / compare",
+    copy: "룩 탐색과 배경 후보 제작을 가속하되 최종 판단은 장면 문맥으로 귀결합니다.",
+  },
+  {
+    index: "04",
+    title: "Automation",
+    meta: "notes / templates / sync",
+    copy: "반복 단계를 문서와 규칙으로 남겨 작업 전환과 재현 비용을 낮춥니다.",
+  },
+  {
+    index: "05",
+    title: "Delivery",
+    meta: "publish / handoff / archive",
+    copy: "결과물과 결정 로그를 함께 정리해 다음 프로젝트의 입력값으로 되돌립니다.",
+  },
+] as const
+
+const practiceAreas = [
+  {
+    title: "Environment Art",
+    copy: "공간의 깊이, 라이팅, 시선 유도를 설계해 화면의 리듬을 만듭니다.",
+  },
+  {
+    title: "AI Workflow",
+    copy: "AI를 결과 대체물이 아니라 탐색 속도를 높이는 제작 보조 장치로 씁니다.",
+  },
+  {
+    title: "Content Automation",
+    copy: "기록과 배포 흐름을 구조화해 반복 가능한 공개 시스템으로 연결합니다.",
+  },
+  {
+    title: "Technical Design",
+    copy: "디자인 언어와 제작 로직 사이의 간격을 줄이는 구조를 설계합니다.",
+  },
+] as const
+
+const journalRows = [
+  ...publicBlog.map((entry) => ({
+    type: "Blog",
+    title: entry.data.title,
+    date: entry.data.date,
+    href: withBase("/blog/"),
+  })),
+  ...publicResearch.map((entry) => ({
+    type: "Research",
+    title: entry.data.title,
+    date: entry.data.date,
+    href: withBase("/research/"),
+  })),
+  ...publicWiki.map((entry) => ({
+    type: "Wiki",
+    title: entry.data.title,
+    date: entry.data.lastUpdated,
+    href: withBase("/wiki/"),
+  })),
+]
+  .sort((left, right) => right.date.getTime() - left.date.getTime())
+  .slice(0, 6)
+---
+
+<BaseLayout
+  title="OJH | Design Pipeline"
+  description="오지환의 3D environment art, AI-assisted production, automation, research, wiki, blog index."
+>
+  <div class="page home-page swiss-home">
+    <section class="swiss-section swiss-hero" aria-labelledby="hero-title">
+      <div class="swiss-hero__copy">
+        <p class="section-kicker">00 / Identity</p>
+        <h1 class="hero-title" id="hero-title">3D 콘텐츠와 AI 파이프라인을 설계합니다.</h1>
+        <p class="hero-lead">
+          오지환은 environment art, AI-assisted production, automation을 연결해 장면 제작과 공개
+          지식 시스템을 함께 다루는 디자이너입니다.
+        </p>
+        <p class="hero-body">
+          Unreal과 Blender로 공간을 세우고, ComfyUI와 정리 규칙으로 탐색 속도를 높이며, 결과와
+          리서치를 다시 축적 가능한 형태로 남깁니다.
+        </p>
+        <div class="hero-actions">
+          <a class="swiss-button swiss-button--primary" href="#selected-work">
+            <span>Selected Work</span>
+            <span class="button-arrow" aria-hidden="true">↗</span>
+          </a>
+          <a class="swiss-button swiss-button--secondary" href="#journal">
+            <span>Journal</span>
+            <span class="button-arrow" aria-hidden="true">↗</span>
+          </a>
+        </div>
+        <div class="metrics-grid" aria-label="Public collection metrics">
+          {
+            metrics.map((metric) => (
+              <article class="metric-card">
+                <span class="metric-value">{metric.value}</span>
+                <span class="metric-label">{metric.label}</span>
+              </article>
+            ))
+          }
+        </div>
+      </div>
+
+      <div class="hero-composition" aria-hidden="true">
+        <div class="hero-grid"></div>
+        <div class="hero-block hero-block--unreal">
+          <span class="hero-label">UNREAL</span>
+          <span class="hero-detail">SCENE</span>
+        </div>
+        <div class="hero-block hero-block--blender">
+          <span class="hero-label">BLENDER</span>
+          <span class="hero-detail">FORM</span>
+        </div>
+        <div class="hero-block hero-block--comfy">
+          <span class="hero-label">COMFYUI</span>
+          <span class="hero-detail">VARIANT</span>
+        </div>
+        <div class="hero-block hero-block--automation">
+          <span class="hero-label">AUTOMATION</span>
+          <span class="hero-detail">INDEX</span>
+        </div>
+        <div class="hero-rule hero-rule--horizontal"></div>
+        <div class="hero-rule hero-rule--vertical"></div>
+        <div class="hero-circle hero-circle--large"></div>
+        <div class="hero-circle hero-circle--small"></div>
+        <div class="hero-signal"></div>
+        <div class="swiss-plus swiss-plus--one">+</div>
+        <div class="swiss-plus swiss-plus--two">+</div>
+      </div>
+    </section>
+
+    <section class="swiss-section" id="selected-work" aria-labelledby="selected-work-title">
+      <div class="section-header">
+        <p class="section-index">01</p>
+        <div>
+          <p class="section-kicker">Selected Work</p>
+          <h2 class="section-title" id="selected-work-title">대표 작업 방향을 네 개의 제작 축으로 정리했습니다.</h2>
+        </div>
+      </div>
+      <div class="work-grid">
+        {
+          featuredWork.map((item) => (
+            <a class="work-card" href={item.href}>
+              <div class="work-card__meta">
+                <span>{item.index}</span>
+                <span>{item.category}</span>
+              </div>
+              <h3 class="work-card__title">{item.title}</h3>
+              <p class="work-card__copy">{item.summary}</p>
+              <div class="work-card__footer">
+                <p class="work-card__tools">{item.tools.join(" / ")}</p>
+                <span class="card-arrow" aria-hidden="true">↗</span>
+              </div>
+            </a>
+          ))
+        }
+      </div>
+    </section>
+
+    <section class="swiss-section" id="method" aria-labelledby="method-title">
+      <div class="section-header">
+        <p class="section-index">02</p>
+        <div>
+          <p class="section-kicker">Method</p>
+          <h2 class="section-title" id="method-title">Research에서 Delivery까지 끊기지 않는 생산 구조를 만듭니다.</h2>
+        </div>
+      </div>
+      <div class="method-grid">
+        {
+          methodSteps.map((step) => (
+            <article class="method-cell">
+              <p class="method-cell__index">{step.index}</p>
+              <h3 class="method-cell__title">{step.title}</h3>
+              <p class="method-cell__meta">{step.meta}</p>
+              <p class="method-cell__copy">{step.copy}</p>
+            </article>
+          ))
+        }
+      </div>
+    </section>
+
+    <section class="swiss-section" id="practice" aria-labelledby="practice-title">
+      <div class="section-header">
+        <p class="section-index">03</p>
+        <div>
+          <p class="section-kicker">Practice</p>
+          <h2 class="section-title" id="practice-title">제작, 탐색, 자동화, 기록을 하나의 실무 언어로 연결합니다.</h2>
+        </div>
+      </div>
+      <div class="practice-grid">
+        {
+          practiceAreas.map((area, index) => (
+            <article class="practice-cell">
+              <p class="practice-cell__index">{`0${index + 1}`}</p>
+              <h3 class="practice-cell__title">{area.title}</h3>
+              <p class="practice-cell__copy">{area.copy}</p>
+            </article>
+          ))
+        }
+      </div>
+    </section>
+
+    <section class="swiss-section" id="journal" aria-labelledby="journal-title">
+      <div class="section-header">
+        <p class="section-index">04</p>
+        <div>
+          <p class="section-kicker">Journal</p>
+          <h2 class="section-title" id="journal-title">최근 공개 노트를 Blog, Research, Wiki에서 다시 인덱싱합니다.</h2>
+        </div>
+      </div>
+
+      {
+        journalRows.length > 0 ? (
+          <div class="journal-list" role="list">
+            {journalRows.map((entry) => (
+              <a class="journal-row" role="listitem" href={entry.href}>
+                <span class="journal-row__type">{entry.type}</span>
+                <span class="journal-row__date">{formatKoreanDate(entry.date)}</span>
+                <span class="journal-row__title">{entry.title}</span>
+                <span class="journal-row__arrow" aria-hidden="true">↗</span>
+              </a>
+            ))}
+          </div>
+        ) : (
+          <div class="empty-state empty-state--home">
+            아직 공개된 Journal 항목이 없습니다. 다음 기록이 정리되면 이 인덱스에 추가됩니다.
+          </div>
+        )
+      }
+    </section>
+
+    <section class="swiss-section swiss-contact" id="contact" aria-labelledby="contact-title">
+      <div class="section-header">
+        <p class="section-index">05</p>
+        <div>
+          <p class="section-kicker section-kicker--inverse">Contact</p>
+          <h2 class="section-title section-title--inverse" id="contact-title">
+            환경 연출, AI 워크플로, 콘텐츠 자동화 설계가 필요한 작업을 연결합니다.
+          </h2>
+        </div>
+      </div>
+      <div class="contact-band">
+        <p class="contact-band__copy">
+          공개 포트폴리오와 연구 아카이브를 기준으로 대화를 시작할 수 있습니다. 작업 맥락에 맞는
+          제작 구조와 기록 방식을 함께 정리합니다.
+        </p>
+        <div class="contact-band__actions">
+          <a class="swiss-button swiss-button--primary-inverse" href={withBase("/contact/")}>
+            <span>Contact Route</span>
+            <span class="button-arrow" aria-hidden="true">↗</span>
+          </a>
+          <a class="swiss-button swiss-button--secondary-inverse" href={withBase("/portfolio/")}>
+            <span>Portfolio Index</span>
+            <span class="button-arrow" aria-hidden="true">↗</span>
+          </a>
+        </div>
+      </div>
+    </section>
+  </div>
+</BaseLayout>

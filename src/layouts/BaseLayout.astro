@@ -1,0 +1,38 @@
+---
+import Footer from "../components/Footer.astro"
+import Header from "../components/Header.astro"
+import "../styles/global.css"
+
+type Props = {
+  readonly title?: string
+  readonly description?: string
+}
+
+const {
+  title = "jay.github.io",
+  description = "포트폴리오, 리서치 위키, 블로그를 위한 Astro 정적 사이트 기초 구조",
+} = Astro.props
+
+const documentTitle = title === "jay.github.io" ? title : `${title} | jay.github.io`
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site ?? Astro.url).toString()
+---
+
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalUrl} />
+    <title>{documentTitle}</title>
+  </head>
+  <body>
+    <div class="site-shell">
+      <Header currentPath={Astro.url.pathname} />
+      <main>
+        <slot />
+      </main>
+      <Footer />
+    </div>
+  </body>
+</html>

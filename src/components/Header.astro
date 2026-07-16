@@ -1,0 +1,70 @@
+---
+import { withBase } from "../lib/site"
+
+type Props = {
+  readonly currentPath: string
+}
+
+const { currentPath } = Astro.props
+
+const navItems = [
+  { index: "00", href: withBase("/"), label: "Home" },
+  { index: "01", href: withBase("/about/"), label: "About" },
+  { index: "02", href: withBase("/portfolio/"), label: "Portfolio" },
+  { index: "03", href: withBase("/research/"), label: "Research" },
+  { index: "04", href: withBase("/wiki/"), label: "Wiki" },
+  { index: "05", href: withBase("/blog/"), label: "Blog" },
+  { index: "06", href: withBase("/contact/"), label: "Contact" },
+]
+---
+
+<header class="site-header">
+  <div class="site-header__inner">
+    <a class="brand-mark" href={withBase("/")}>
+      <span class="brand-mark__code">OJH</span>
+      <span class="brand-mark__name">DESIGN PIPELINE</span>
+    </a>
+
+    <nav class="site-nav site-nav--desktop" aria-label="주요 메뉴">
+      {
+        navItems.map((item) => {
+          const isActive =
+            item.href === withBase("/")
+              ? currentPath === item.href
+              : currentPath.startsWith(item.href)
+
+          return (
+            <a class:list={["site-nav__link", { "is-active": isActive }]} href={item.href}>
+              <span class="site-nav__index" aria-hidden="true">{item.index}</span>
+              <span class="site-nav__label">{item.label}</span>
+            </a>
+          )
+        })
+      }
+    </nav>
+
+    <details class="mobile-nav">
+      <summary class="mobile-nav__summary">
+        <span>Menu</span>
+        <span class="mobile-nav__symbol" aria-hidden="true">+</span>
+      </summary>
+      <nav class="site-nav site-nav--mobile" aria-label="모바일 주요 메뉴">
+        {
+          navItems.map((item) => {
+            const isActive =
+              item.href === withBase("/")
+                ? currentPath === item.href
+                : currentPath.startsWith(item.href)
+
+            return (
+              <a class:list={["site-nav__link", { "is-active": isActive }]} href={item.href}>
+                <span class="site-nav__index" aria-hidden="true">{item.index}</span>
+                <span class="site-nav__label">{item.label}</span>
+              </a>
+            )
+          })
+        }
+      </nav>
+    </details>
+  </div>
+</header>

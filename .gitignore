@@ -1,0 +1,27 @@
+node_modules/
+.astro/
+dist/
+npm-debug.log*
+
+# Local agent prompts and visual QA captures
+.hermes/tmp/
+.codex/home-*.png
+
+# Private implementation and authoring material
+.codex/
+.hermes/
+AGENTS.md
+DESIGN.md
+docs/
+
+# Keep the public repository free of local Obsidian settings, drafts, templates, assets,
+# and unpublished content. Public entries require an explicit, reviewed add.
+content/.obsidian/
+content/_drafts/
+content/_templates/
+content/assets/
+content/README.md
+content/blog/*.md
+content/projects/*.md
+content/research/*.md
+content/wiki/*.md

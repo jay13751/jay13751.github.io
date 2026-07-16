@@ -1,0 +1,53 @@
+---
+import { getCollection } from "astro:content"
+import BaseLayout from "../../layouts/BaseLayout.astro"
+import { formatKoreanDate, isPublicEntry } from "../../lib/content"
+
+const entries = (await getCollection("wiki"))
+  .filter(isPublicEntry)
+  .sort((left, right) => right.data.lastUpdated.getTime() - left.data.lastUpdated.getTime())
+---
+
+<BaseLayout title="Wiki" description="3D 제작과 AI 워크플로에서 재사용하는 절차와 체크리스트를 정리한 공개 위키입니다.">
+  <div class="page">
+    <section class="hero-shell page-hero">
+      <span class="eyebrow">Wiki</span>
+      <h1 class="page-title">재사용 가능한 제작 노트를 축적하는 공개 위키</h1>
+      <p class="page-copy">
+        제작 과정에서 반복해서 사용하는 절차, 체크리스트, 판단 기준을 재사용 가능한 형태로 정리합니다.
+      </p>
+    </section>
+
+    <section class="section-block">
+      <div class="list-shell">
+        <div class="meta-row">
+          <span class="count-chip">{entries.length} public notes</span>
+          <span>공개된 노트를 마지막 수정일 순으로 보여줍니다.</span>
+        </div>
+
+        {
+          entries.length > 0 ? (
+            <div class="list-stack">
+              {entries.map((entry) => (
+                <article class="list-item">
+                  <div class="meta-row">
+                    <span class="pill">{entry.data.category || "uncategorized"}</span>
+                    <span>{formatKoreanDate(entry.data.lastUpdated)}</span>
+                  </div>
+                  <h2 class="list-title">{entry.data.title}</h2>
+                  <p class="card-copy">
+                    태그 {entry.data.tags.length}개가 등록된 공개 위키 노트입니다.
+                  </p>
+                </article>
+              ))}
+            </div>
+          ) : (
+            <div class="empty-state">
+              아직 공개된 위키 노트가 없습니다. 첫 번째 제작 가이드를 준비하고 있습니다.
+            </div>
+          )
+        }
+      </div>
+    </section>
+  </div>
+</BaseLayout>
